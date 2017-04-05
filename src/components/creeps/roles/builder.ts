@@ -25,7 +25,7 @@ export class Builder extends BaseWorker.BaseWorker {
     }
 
     if (creep.memory.building) {
-      if (targets.keys) {
+      if (targets && targets.keys) {
         if (targets.length) {
           let target: ConstructionSite = targets[0] as ConstructionSite;
 
@@ -37,18 +37,24 @@ export class Builder extends BaseWorker.BaseWorker {
             creep.memory.buildingId = target.id;
           }
         }
-      }
-      else {
-        let repairTarget = creep.pos.findClosestByRange<Structure>(FIND_STRUCTURES, {
-          filter: (structure: Structure) => {
-            return (structure.hits < structure.hitsMax);
-          }
-        });
+        else {
+          let repairTarget = creep.pos.findClosestByRange<Structure>(FIND_STRUCTURES, {
+            filter: (structure: Structure) => {
+              return (structure.hits < structure.hitsMax);
+            }
+          });
 
-        if (repairTarget && creep.repair(repairTarget) === ERR_NOT_IN_RANGE) {
-          creep.moveTo(repairTarget);
+          if (repairTarget) {
+            let status = creep.repair(repairTarget);
+            //this.logger.debug("repair status: " + status);
+
+            if (status === ERR_NOT_IN_RANGE) {
+              creep.moveTo(repairTarget);
+            }
+          }
         }
       }
+
     }
 
     else {

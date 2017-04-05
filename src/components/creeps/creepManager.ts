@@ -55,7 +55,7 @@ export class CreepManager {
       })[0];
       if (tower) {
         let closestDamagedStructure = tower.pos.findClosestByRange<Structure>(FIND_STRUCTURES, {
-          filter: (structure: Structure) => structure.hits < structure.hitsMax
+          filter: (structure: Structure) => structure.hits < structure.hitsMax *.75 && structure.structureType != STRUCTURE_WALL
         });
         if (closestDamagedStructure) {
           tower.repair(closestDamagedStructure);
