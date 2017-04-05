@@ -1,4 +1,4 @@
-Originally forked from (https://github.com/DBosley/screeps-typescript-starter)
+Originally cloned from (https://github.com/DBosley/screeps-typescript-starter)
 
 ***
 # screeps-starter
