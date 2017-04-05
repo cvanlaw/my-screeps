@@ -47,6 +47,25 @@ export class CreepManager {
       if (creep.memory.role === "transporter") {
         this.transporter.run(creep);
       }
+
+      var tower = room.find<StructureTower>(FIND_STRUCTURES, {
+        filter: (structure: StructureTower) => {
+          return (structure.structureType == STRUCTURE_TOWER);
+        }
+      })[0];
+      if (tower) {
+        let closestDamagedStructure = tower.pos.findClosestByRange<Structure>(FIND_STRUCTURES, {
+          filter: (structure: Structure) => structure.hits < structure.hitsMax
+        });
+        if (closestDamagedStructure) {
+          tower.repair(closestDamagedStructure);
+        }
+
+        let closestHostile = tower.pos.findClosestByRange<Creep>(FIND_HOSTILE_CREEPS);
+        if (closestHostile) {
+          tower.attack(closestHostile);
+        }
+      }
     });
   }
 

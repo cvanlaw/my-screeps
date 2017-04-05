@@ -14,7 +14,7 @@ export class Transporter extends BaseWorker {
     let spawn = creep.room.find<Spawn>(FIND_MY_SPAWNS)[0];
 
     if (existingTargetContainer) {
-      this.logger.debug("using existing container " + existingTargetContainer);
+      // this.logger.debug("using existing container " + existingTargetContainer);
       targetContainer = Game.getObjectById(existingTargetContainer) as StructureContainer;
     }
 
@@ -47,7 +47,7 @@ export class Transporter extends BaseWorker {
     let destination = creep.memory.dropOffDestination;
 
     if (destination) {
-      this.logger.debug("using existing destination " + destination);
+      // this.logger.debug("using existing destination " + destination);
       let dest = Game.getObjectById(destination) as Structure;
       if (dest.structureType === STRUCTURE_SPAWN && (dest as StructureSpawn).energy === (dest as StructureSpawn).energyCapacity) {
         creep.memory.dropOffDestination = null;
