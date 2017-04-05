@@ -23,8 +23,8 @@ export class CreepManager {
    * @param {Room} room
    */
   public run(room: Room): void {
-    this._loadCreeps(room);
-    this._buildMissingCreeps(room);
+    this.loadCreeps(room);
+    this.buildMissingCreeps(room);
 
     _.each(this.creeps, (creep: Creep) => {
       if (creep.memory.role === "harvester") {
@@ -41,7 +41,7 @@ export class CreepManager {
    *
    * @param {Room} room
    */
-  private _loadCreeps(room: Room) {
+  private loadCreeps(room: Room) {
     this.creeps = room.find<Creep>(FIND_MY_CREEPS);
     this.creepCount = _.size(this.creeps);
 
@@ -59,7 +59,7 @@ export class CreepManager {
    *
    * @param {Room} room
    */
-  private _buildMissingCreeps(room: Room) {
+  private buildMissingCreeps(room: Room) {
 
     let spawns: Spawn[] = room.find<Spawn>(FIND_MY_SPAWNS, {
       filter: (spawn: Spawn) => {
@@ -73,12 +73,12 @@ export class CreepManager {
       }
     }
 
-    this._spawnRole("harvester", 2, this.harvesters, room, spawns);
-    this._spawnRole("upgrader", 1, this.upgraders, room, spawns);
+    this.spawnRole("harvester", 2, this.harvesters, room, spawns);
+    this.spawnRole("upgrader", 1, this.upgraders, room, spawns);
 
   }
 
-  private _spawnRole(roleName: string, maxCount: number, creeps: Creep[], room: Room, spawns: StructureSpawn[]) {
+  private spawnRole(roleName: string, maxCount: number, creeps: Creep[], room: Room, spawns: StructureSpawn[]) {
     let bodyParts: string[];
     if (creeps.length < maxCount) {
       if (creeps.length < 1 || room.energyCapacityAvailable <= 800) {
@@ -88,7 +88,7 @@ export class CreepManager {
       }
 
       _.each(spawns, (spawn: Spawn) => {
-        this._spawnCreep(spawn, bodyParts, roleName);
+        this.spawnCreep(spawn, bodyParts, roleName);
       });
     }
   }
@@ -101,7 +101,7 @@ export class CreepManager {
    * @param {string} role
    * @returns
    */
-  private _spawnCreep(spawn: Spawn, bodyParts: string[], role: string) {
+  private spawnCreep(spawn: Spawn, bodyParts: string[], role: string) {
     let uuid: number = Memory.uuid;
     let status: number | string = spawn.canCreateCreep(bodyParts, undefined);
 
