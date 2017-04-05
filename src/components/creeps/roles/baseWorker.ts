@@ -26,7 +26,7 @@ export class BaseWorker {
   }
 
   protected determineEnergyDropOff(creep: Creep): Spawn | StructureContainer {
-    let container = creep.pos.findClosestByPath<Structure>(FIND_STRUCTURES, {
+    let container = creep.pos.findClosestByRange<Structure>(FIND_STRUCTURES, {
       filter: (structure: Structure) => {
         return (structure.structureType == STRUCTURE_CONTAINER);
       }
@@ -46,7 +46,26 @@ export class BaseWorker {
       }
   }
 
-  protected determineContainer(creep: Creep): StructureContainer | null {
+  protected determineContainer(creep: Creep, useFullest: Boolean = true): StructureContainer | null {
+    if(useFullest) {
+      return this.determineFullestContainer(creep);
+    }
+
+    let container = creep.pos.findClosestByRange<StructureContainer>(FIND_STRUCTURES, {
+      filter: (structure: StructureContainer) => {
+        return (structure.structureType == STRUCTURE_CONTAINER);
+      }
+    });
+
+    if (!container) {
+      log.error("No containers");
+      return null;
+    }
+
+    return container;
+  }
+
+  protected determineFullestContainer(creep: Creep): StructureContainer | null {
     let containers = creep.room.find<StructureContainer>(FIND_STRUCTURES, {
       filter: (structure: StructureContainer) => {
         return (structure.structureType == STRUCTURE_CONTAINER);

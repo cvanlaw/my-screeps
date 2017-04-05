@@ -37,7 +37,14 @@ public run(creep: Creep): void {
     } else if (_.sum(creep.carry) === creep.carryCapacity) {
       this.moveToDropEnergy(creep, spawn);
     } else {
-      this.moveToHarvest(creep, energySource);
+      let container = this.determineContainer(creep, false);
+        if (container) {
+          this.logger.debug("builder withdrawing from container.")
+          this.moveToWithdrawFromContainer(creep, container);
+        }
+        else {
+          this.moveToHarvest(creep, energySource);
+        }
     }
   }
 }

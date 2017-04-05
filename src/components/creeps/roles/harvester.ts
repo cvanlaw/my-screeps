@@ -1,5 +1,6 @@
 import * as creepActions from "../creepActions";
 import * as BaseWorker from "./baseWorker";
+import * as Config from "../../../config/config";
 
 /**
  * Runs all creep actions.
@@ -13,12 +14,23 @@ export class Harvester extends BaseWorker.BaseWorker {
 
   public run(creep: Creep): void {
     let spawn = creep.room.find<Spawn>(FIND_MY_SPAWNS)[0];
+    let targetContainer = this.determineEnergyDropOff(creep);
 
     if (creepActions.needsRenew(creep) && _.sum(creep.carry) === 0) {
       creepActions.moveToRenew(creep, spawn);
     } else if (_.sum(creep.carry) === creep.carryCapacity) {
       //this.logger.debug(creep.name + " moving to drop off energy.");
+      if(targetContainer.structureType == STRUCTURE_CONTAINER
+      && _.sum((targetContainer as StructureContainer).store) == (targetContainer as StructureContainer).storeCapacity
+      && (targetContainer as StructureContainer).ticksToDecay <= Config.DEFAULT_MIN_TICKS_TO_DECAY_BEFORE_REPAIR) {
+        if(creep.repair(targetContainer) === ERR_NOT_IN_RANGE) {
+          creep.say("moving to repair");
+          creep.moveTo(targetContainer);
+        }
+      }
+    else {
       this.moveToDropEnergy(creep, this.determineEnergyDropOff(creep));
+    }
     } else {
       //this.logger.debug(creep.name + " harvesting");
       this.moveToHarvest(creep, this.determineSource(creep));

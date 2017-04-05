@@ -89,11 +89,10 @@ export class CreepManager {
       }
     }
 
-    this.spawnRole("harvester", 4, this.harvesters, room, spawns);
-    this.spawnRole("upgrader", 1, this.upgraders, room, spawns);
-    this.spawnRole("builder", 5, this.builders, room, spawns);
-    this.spawnRole("transporter", 2, this.transporters, room, spawns);
-
+    this.spawnRole("transporter", 3, this.transporters, room, spawns);
+    this.spawnRole("harvester", 6, this.harvesters, room, spawns);
+    this.spawnRole("upgrader", 6, this.upgraders, room, spawns);
+    this.spawnRole("builder", 3, this.builders, room, spawns);
   }
 
   private spawnRole(roleName: string, maxCount: number, creeps: Creep[], room: Room, spawns: StructureSpawn[]) {
@@ -102,9 +101,10 @@ export class CreepManager {
       if (roleName === "transporter") {
         bodyParts = [CARRY, CARRY, MOVE, MOVE];
       }
-      else if (creeps.length < 1 || room.energyCapacityAvailable <= 800) {
+      else if (creeps.length < 1 || room.energyAvailable <= 800) {
         bodyParts = [WORK, WORK, CARRY, MOVE];
-      } else if (room.energyCapacityAvailable > 800) {
+      }
+      else if (room.energyAvailable > 800) {
         bodyParts = [WORK, WORK, WORK, WORK, CARRY, CARRY, MOVE, MOVE];
       }
 
