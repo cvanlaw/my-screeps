@@ -89,7 +89,7 @@ export class CreepManager {
       }
     }
 
-    this.spawnRole("transporter", 3, this.transporters, room, spawns);
+    this.spawnRole("transporter", 6, this.transporters, room, spawns);
     this.spawnRole("harvester", 6, this.harvesters, room, spawns);
     this.spawnRole("upgrader", 6, this.upgraders, room, spawns);
     this.spawnRole("builder", 3, this.builders, room, spawns);
