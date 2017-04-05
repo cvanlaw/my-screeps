@@ -22,7 +22,7 @@ export class Harvester extends BaseWorker.BaseWorker {
       //this.logger.debug(creep.name + " moving to drop off energy.");
       if(targetContainer.structureType == STRUCTURE_CONTAINER
       && _.sum((targetContainer as StructureContainer).store) == (targetContainer as StructureContainer).storeCapacity
-      && (targetContainer as StructureContainer).ticksToDecay <= Config.DEFAULT_MIN_TICKS_TO_DECAY_BEFORE_REPAIR) {
+      && (targetContainer as StructureContainer).hits <= targetContainer.hitsMax) {
         if(creep.repair(targetContainer) === ERR_NOT_IN_RANGE) {
           creep.say("moving to repair");
           creep.moveTo(targetContainer);
