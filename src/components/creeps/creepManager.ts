@@ -1,8 +1,9 @@
 import * as Config from "../../config/config";
 
-import * as harvester from "./roles/harvester";
-import * as upgrader from "./roles/upgrader";
-import * as builder from "./roles/builder";
+import { Harvester } from "./roles/harvester";
+import { Upgrader } from "./roles/upgrader";
+import {Builder} from "./roles/builder";
+import { Transporter} from "./roles/transporter";
 
 import { log } from "../../lib/logger/log";
 
@@ -16,7 +17,12 @@ export class CreepManager {
     public creepCount: number = 0,
     public harvesters: Creep[] = [],
     public upgraders: Creep[] = [],
-    public builders: Creep[] = []
+    public builders: Creep[] = [],
+    public transporters: Creep[] = [],
+    public harvester: Harvester = new Harvester(),
+    public transporter: Transporter = new Transporter(),
+    public upgrader: Upgrader = new Upgrader(),
+    public builder: Builder = new Builder()
   ) {  }
   /**
    * Initialization scripts for CreepManager module.
@@ -30,13 +36,16 @@ export class CreepManager {
 
     _.each(this.creeps, (creep: Creep) => {
       if (creep.memory.role === "harvester") {
-        harvester.run(creep);
+        this.harvester.run(creep);
       }
       if (creep.memory.role === "upgrader") {
-        upgrader.run(creep);
+        this.upgrader.run(creep);
       }
       if (creep.memory.role === "builder") {
-        builder.run(creep);
+        this.builder.run(creep);
+      }
+      if (creep.memory.role === "transporter") {
+        this.transporter.run(creep);
       }
     });
   }
@@ -54,6 +63,7 @@ export class CreepManager {
     this.harvesters = _.filter(this.creeps, (creep) => creep.memory.role === "harvester");
     this.upgraders = _.filter(this.creeps, (creep) => creep.memory.role === "upgrader");
     this.builders = _.filter(this.creeps, (creep) => creep.memory.role === "builder");
+    this.transporters = _.filter(this.creeps, (creep) => creep.memory.role === "transporter");
 
     if (Config.ENABLE_DEBUG_MODE) {
       log.info(this.creepCount + " creeps found in the playground.");
@@ -81,7 +91,8 @@ export class CreepManager {
 
     this.spawnRole("harvester", 2, this.harvesters, room, spawns);
     this.spawnRole("upgrader", 1, this.upgraders, room, spawns);
-    this.spawnRole("builder", 2, this.builders, room, spawns);
+    this.spawnRole("builder", 4, this.builders, room, spawns);
+    this.spawnRole("transporter", 2, this.transporters, room, spawns);
 
   }
 
