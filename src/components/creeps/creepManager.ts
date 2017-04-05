@@ -2,6 +2,7 @@ import * as Config from "../../config/config";
 
 import * as harvester from "./roles/harvester";
 import * as upgrader from "./roles/upgrader";
+import * as builder from "./roles/builder";
 
 import { log } from "../../lib/logger/log";
 
@@ -14,7 +15,8 @@ export class CreepManager {
     public creeps: Creep[] = [],
     public creepCount: number = 0,
     public harvesters: Creep[] = [],
-    public upgraders: Creep[] = []
+    public upgraders: Creep[] = [],
+    public builders: Creep[] = []
   ) {  }
   /**
    * Initialization scripts for CreepManager module.
@@ -33,6 +35,9 @@ export class CreepManager {
       if (creep.memory.role === "upgrader") {
         upgrader.run(creep);
       }
+      if (creep.memory.role === "builder") {
+        builder.run(creep);
+      }
     });
   }
 
@@ -48,6 +53,7 @@ export class CreepManager {
     // Iterate through each creep and push them into the role array.
     this.harvesters = _.filter(this.creeps, (creep) => creep.memory.role === "harvester");
     this.upgraders = _.filter(this.creeps, (creep) => creep.memory.role === "upgrader");
+    this.builders = _.filter(this.creeps, (creep) => creep.memory.role === "builder");
 
     if (Config.ENABLE_DEBUG_MODE) {
       log.info(this.creepCount + " creeps found in the playground.");
@@ -75,6 +81,7 @@ export class CreepManager {
 
     this.spawnRole("harvester", 2, this.harvesters, room, spawns);
     this.spawnRole("upgrader", 1, this.upgraders, room, spawns);
+    this.spawnRole("builder", 2, this.builders, room, spawns);
 
   }
 
