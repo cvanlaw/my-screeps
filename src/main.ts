@@ -1,4 +1,4 @@
-import * as CreepManager from "./components/creeps/creepManager";
+import { CreepManager } from "./components/creeps/creepManager";
 import * as Config from "./config/config";
 
 import { log } from "./lib/logger/log";
@@ -14,6 +14,7 @@ if (Config.USE_PATHFINDER) {
 }
 
 log.info("load");
+const creepManager = new CreepManager();
 
 /**
  * Screeps system expects this "loop" method in main.js to run the
@@ -24,6 +25,7 @@ log.info("load");
  * @export
  */
 export function loop() {
+  console.log("Tick");
   // Check memory for null or out of bounds custom objects
   if (!Memory.uuid || Memory.uuid > 100) {
     Memory.uuid = 0;
@@ -32,11 +34,12 @@ export function loop() {
   for (let i in Game.rooms) {
     let room: Room = Game.rooms[i];
 
-    CreepManager.run(room);
+    creepManager.run(room);
 
     // Clears any non-existing creep memory.
     for (let name in Memory.creeps) {
       let creep: any = Memory.creeps[name];
+      console.log(creep.room);
 
       if (creep.room === room.name) {
         if (!Game.creeps[name]) {
