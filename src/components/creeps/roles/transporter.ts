@@ -13,7 +13,7 @@ export class Transporter extends BaseWorker {
     let existingTargetContainer = creep.memory.existingTargetContainer;
     let spawn = creep.room.find<Spawn>(FIND_MY_SPAWNS)[0];
 
-    if(existingTargetContainer) {
+    if (existingTargetContainer) {
       this.logger.debug("using existing container " + existingTargetContainer);
       targetContainer = Game.getObjectById(existingTargetContainer) as StructureContainer;
     }
@@ -25,7 +25,7 @@ export class Transporter extends BaseWorker {
       this.moveToDropEnergy(creep, this.determineDropOff(creep));
       //this.logger.debug("dropping off");
 
-      if(_.sum(creep.carry) < creep.carryCapacity) {
+      if (_.sum(creep.carry) < creep.carryCapacity) {
         creep.memory.destination = null;
       }
     }
@@ -33,7 +33,7 @@ export class Transporter extends BaseWorker {
       //this.logger.debug("picking up");
       this.moveToWithdrawFromContainer(creep, targetContainer);
 
-      if(_.sum(creep.carry) == creep.carryCapacity) {
+      if (_.sum(creep.carry) == creep.carryCapacity) {
         creep.memory.existingTargetContainer = null;
       }
       else {
@@ -46,18 +46,27 @@ export class Transporter extends BaseWorker {
     let spawn = creep.room.find<Spawn>(FIND_MY_SPAWNS)[0];
     let destination = creep.memory.dropOffDestination;
 
-    if(destination) {
+    if (destination) {
       this.logger.debug("using existing destination " + destination);
-      return Game.getObjectById(destination) as Structure;
+      let dest = Game.getObjectById(destination) as Structure;
+      if (dest.structureType === STRUCTURE_SPAWN && (dest as StructureSpawn).energy == (dest as StructureSpawn).energyCapacity) {
+        creep.memory.dropOffDestination = null;
+      }
+      else if (dest.structureType === STRUCTURE_CONTAINER && _.sum((dest as StructureContainer).store) == (dest as StructureContainer).storeCapacity) {
+        creep.memory.dropOffDestination = null;
+      }
+      else if (dest.structureType === STRUCTURE_TOWER && (dest as StructureTower).energy == (dest as StructureTower).energyCapacity) {
+        creep.memory.dropOffDestination = null;
+      }
     }
 
-    let structure = creep.room.find<StructureExtension>(FIND_STRUCTURES, {
-      filter: (structure: StructureExtension) => {
+    let structure = creep.room.find<StructureExtension | StructureTower>(FIND_STRUCTURES, {
+      filter: (structure: StructureExtension | StructureTower) => {
         return (structure.structureType == STRUCTURE_EXTENSION && structure.energy < structure.energyCapacity)
       }
     })[0];
 
-    if (structure) {
+    if (structure && structure.energy < structure.energyCapacity) {
       creep.memory.dropOffDestination = structure.id;
       return structure;
     }
