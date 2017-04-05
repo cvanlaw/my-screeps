@@ -36,6 +36,9 @@ export class Transporter extends BaseWorker {
       if(_.sum(creep.carry) == creep.carryCapacity) {
         creep.memory.existingTargetContainer = null;
       }
+      else {
+        creep.memory.existingTargetContainer = targetContainer.id;
+      }
     }
   }
 
@@ -55,6 +58,7 @@ export class Transporter extends BaseWorker {
     })[0];
 
     if (structure) {
+      creep.memory.dropOffDestination = structure.id;
       return structure;
     }
 
@@ -67,6 +71,7 @@ export class Transporter extends BaseWorker {
           }
         });
         if (upgradeContainer) {
+          creep.memory.dropOffDestination = upgradeContainer.id;
           return upgradeContainer;
         }
       }
