@@ -39,7 +39,7 @@ public run(creep: Creep): void {
     } else {
       let container = this.determineContainer(creep, false);
         if (container) {
-          this.logger.debug("builder withdrawing from container.")
+          //this.logger.debug("builder withdrawing from container.")
           this.moveToWithdrawFromContainer(creep, container);
         }
         else {

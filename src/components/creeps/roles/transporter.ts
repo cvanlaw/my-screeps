@@ -10,7 +10,13 @@ import * as creepActions from "../creepActions";
 export class Transporter extends BaseWorker {
   public run(creep: Creep): void {
     let targetContainer = this.determineContainer(creep);
+    let existingTargetContainer = creep.memory.existingTargetContainer;
     let spawn = creep.room.find<Spawn>(FIND_MY_SPAWNS)[0];
+
+    if(existingTargetContainer) {
+      this.logger.debug("using existing container " + existingTargetContainer);
+      targetContainer = Game.getObjectById(existingTargetContainer) as StructureContainer;
+    }
 
     if (creepActions.needsRenew(creep) && _.sum(creep.carry) == 0) {
       creepActions.moveToRenew(creep, spawn);
@@ -18,15 +24,30 @@ export class Transporter extends BaseWorker {
     if (_.sum(creep.carry) == creep.carryCapacity) {
       this.moveToDropEnergy(creep, this.determineDropOff(creep));
       //this.logger.debug("dropping off");
+
+      if(_.sum(creep.carry) < creep.carryCapacity) {
+        creep.memory.destination = null;
+      }
     }
-    if (_.sum(creep.carry) < creep.carryCapacity && targetContainer) {
+    if (_.sum(creep.carry) < creep.carryCapacity && (targetContainer)) {
       //this.logger.debug("picking up");
       this.moveToWithdrawFromContainer(creep, targetContainer);
+
+      if(_.sum(creep.carry) == creep.carryCapacity) {
+        creep.memory.existingTargetContainer = null;
+      }
     }
   }
 
   private determineDropOff(creep: Creep): Structure {
     let spawn = creep.room.find<Spawn>(FIND_MY_SPAWNS)[0];
+    let destination = creep.memory.dropOffDestination;
+
+    if(destination) {
+      this.logger.debug("using existing destination " + destination);
+      return Game.getObjectById(destination) as Structure;
+    }
+
     let structure = creep.room.find<StructureExtension>(FIND_STRUCTURES, {
       filter: (structure: StructureExtension) => {
         return (structure.structureType == STRUCTURE_EXTENSION && structure.energy < structure.energyCapacity)

@@ -59,7 +59,7 @@ export class Builder extends BaseWorker.BaseWorker {
       } else {
         let container = this.determineContainer(creep);
         if (container) {
-          this.logger.debug("builder withdrawing from container.")
+          // this.logger.debug("builder withdrawing from container.")
           this.moveToWithdrawFromContainer(creep, container);
         }
         else {
