@@ -2,8 +2,8 @@ import * as Config from "../../config/config";
 
 import { Harvester } from "./roles/harvester";
 import { Upgrader } from "./roles/upgrader";
-import {Builder} from "./roles/builder";
-import { Transporter} from "./roles/transporter";
+import { Builder } from "./roles/builder";
+import { Transporter } from "./roles/transporter";
 
 import { log } from "../../lib/logger/log";
 
@@ -23,7 +23,7 @@ export class CreepManager {
     public transporter: Transporter = new Transporter(),
     public upgrader: Upgrader = new Upgrader(),
     public builder: Builder = new Builder()
-  ) {  }
+  ) { }
   /**
    * Initialization scripts for CreepManager module.
    *
@@ -92,14 +92,17 @@ export class CreepManager {
     this.spawnRole("harvester", 2, this.harvesters, room, spawns);
     this.spawnRole("upgrader", 1, this.upgraders, room, spawns);
     this.spawnRole("builder", 4, this.builders, room, spawns);
-    this.spawnRole("transporter", 2, this.transporters, room, spawns);
+    this.spawnRole("transporter", 4, this.transporters, room, spawns);
 
   }
 
   private spawnRole(roleName: string, maxCount: number, creeps: Creep[], room: Room, spawns: StructureSpawn[]) {
     let bodyParts: string[];
     if (creeps.length < maxCount) {
-      if (creeps.length < 1 || room.energyCapacityAvailable <= 800) {
+      if (roleName === "transporter") {
+        bodyParts = [CARRY, CARRY, MOVE, MOVE];
+      }
+      else if (creeps.length < 1 || room.energyCapacityAvailable <= 800) {
         bodyParts = [WORK, WORK, CARRY, MOVE];
       } else if (room.energyCapacityAvailable > 800) {
         bodyParts = [WORK, WORK, WORK, WORK, CARRY, CARRY, MOVE, MOVE];

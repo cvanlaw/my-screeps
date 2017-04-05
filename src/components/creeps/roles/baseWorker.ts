@@ -26,11 +26,11 @@ export class BaseWorker {
   }
 
   protected determineEnergyDropOff(creep: Creep): Spawn | StructureContainer {
-    let container = creep.room.find<Structure>(FIND_STRUCTURES, {
+    let container = creep.pos.findClosestByPath<Structure>(FIND_STRUCTURES, {
       filter: (structure: Structure) => {
         return (structure.structureType == STRUCTURE_CONTAINER);
       }
-    })[0];
+    });
 
     if (container) {
       return container as StructureContainer;

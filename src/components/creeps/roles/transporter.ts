@@ -9,12 +9,12 @@ import { log } from "../../../lib/logger/log";
 export class Transporter extends BaseWorker{
   public run(creep: Creep): void {
     let targetContainer = this.determineContainer(creep);
-    let spawn = creep.room.find<Spawn>(FIND_MY_SPAWNS)[0];
+
     if(_.sum(creep.carry) == creep.carryCapacity) {
-      this.moveToDropEnergy(creep, spawn);
+      this.moveToDropEnergy(creep, this.determineDropOff(creep));
     }
     if (_.sum(creep.carry) < creep.carryCapacity && targetContainer) {
-      if (creep.withdraw(targetContainer, RESOURCE_ENERGY, creep.carryCapacity) == ERR_NOT_IN_RANGE)
+      if (creep.withdraw(targetContainer, RESOURCE_ENERGY, creep.carryCapacity - _.sum(creep.carry)) == ERR_NOT_IN_RANGE)
         creep.moveTo(targetContainer);
     }
   }
@@ -44,6 +44,20 @@ export class Transporter extends BaseWorker{
     });
 
     return Game.getObjectById(containerId) as StructureContainer;
+  }
+
+  private determineDropOff(creep: Creep): Structure {
+    let structure = creep.room.find<StructureExtension>(FIND_STRUCTURES, {
+      filter: (structure: StructureExtension) => {
+        return (structure.structureType == STRUCTURE_EXTENSION && structure.energy < structure.energyCapacity)
+      }
+    })[0];
+
+    if(structure) {
+      return structure;
+    }
+
+    return creep.room.find<Spawn>(FIND_MY_SPAWNS)[0];
   }
 
 }
