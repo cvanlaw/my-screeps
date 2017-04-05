@@ -3,7 +3,7 @@ import { log } from "../../../lib/logger/log";
 
 export class BaseWorker {
 
-  constructor() {  }
+  constructor( public logger = log) {  }
 
   protected tryHarvest(creep: Creep, target: Source): number {
     return creep.harvest(target);
@@ -38,5 +38,42 @@ export class BaseWorker {
 
     log.debug("no structure container");
     return creep.room.find<Spawn>(FIND_MY_SPAWNS)[0];
+  }
+
+  protected moveToWithdrawFromContainer(creep: Creep, container: StructureContainer) {
+    if (creep.withdraw(container, RESOURCE_ENERGY, creep.carryCapacity - _.sum(creep.carry)) == ERR_NOT_IN_RANGE) {
+        creep.moveTo(container);
+      }
+  }
+
+  protected determineContainer(creep: Creep): StructureContainer | null {
+    let containers = creep.room.find<StructureContainer>(FIND_STRUCTURES, {
+      filter: (structure: StructureContainer) => {
+        return (structure.structureType == STRUCTURE_CONTAINER);
+      }
+    });
+
+    if (!containers) {
+      log.error("No containers");
+      return null;
+    }
+
+    let containerId = "";
+    let maxPercentFull = 0; // 0-1
+
+    containers.forEach(element => {
+      let currentStore = _.sum(element.store);
+      let percentFull = currentStore / element.storeCapacity;
+      if (currentStore > 0 && currentStore >= creep.carryCapacity && percentFull > maxPercentFull) {
+        maxPercentFull = percentFull;
+        containerId = element.id;
+      }
+    });
+
+    if(maxPercentFull === 0) {
+      return null;
+    }
+
+    return Game.getObjectById(containerId) as StructureContainer;
   }
 }

@@ -39,7 +39,7 @@ export function loop() {
     // Clears any non-existing creep memory.
     for (let name in Memory.creeps) {
       let creep: any = Memory.creeps[name];
-      console.log(creep.room);
+      //console.log(creep.room);
 
       if (creep.room === room.name) {
         if (!Game.creeps[name]) {
