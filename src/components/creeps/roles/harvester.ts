@@ -1,6 +1,5 @@
 import * as creepActions from "../creepActions";
 import * as BaseWorker from "./baseWorker";
-import * as Config from "../../../config/config";
 
 /**
  * Runs all creep actions.
