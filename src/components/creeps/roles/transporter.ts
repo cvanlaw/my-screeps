@@ -26,7 +26,7 @@ export class Transporter extends BaseWorker {
       //this.logger.debug("dropping off");
 
       if (_.sum(creep.carry) < creep.carryCapacity) {
-        creep.memory.destination = null;
+        creep.memory.dropOffDestination = null;
       }
     }
     if (_.sum(creep.carry) < creep.carryCapacity && (targetContainer)) {
@@ -49,20 +49,21 @@ export class Transporter extends BaseWorker {
     if (destination) {
       this.logger.debug("using existing destination " + destination);
       let dest = Game.getObjectById(destination) as Structure;
-      if (dest.structureType === STRUCTURE_SPAWN && (dest as StructureSpawn).energy == (dest as StructureSpawn).energyCapacity) {
+      if (dest.structureType === STRUCTURE_SPAWN && (dest as StructureSpawn).energy === (dest as StructureSpawn).energyCapacity) {
         creep.memory.dropOffDestination = null;
       }
-      else if (dest.structureType === STRUCTURE_CONTAINER && _.sum((dest as StructureContainer).store) == (dest as StructureContainer).storeCapacity) {
+      else if (dest.structureType === STRUCTURE_CONTAINER && _.sum((dest as StructureContainer).store) === (dest as StructureContainer).storeCapacity) {
         creep.memory.dropOffDestination = null;
       }
-      else if (dest.structureType === STRUCTURE_TOWER && (dest as StructureTower).energy == (dest as StructureTower).energyCapacity) {
+      else if (dest.structureType === STRUCTURE_TOWER && (dest as StructureTower).energy === (dest as StructureTower).energyCapacity) {
         creep.memory.dropOffDestination = null;
       }
     }
 
     let structure = creep.room.find<StructureExtension | StructureTower>(FIND_STRUCTURES, {
       filter: (structure: StructureExtension | StructureTower) => {
-        return (structure.structureType == STRUCTURE_EXTENSION && structure.energy < structure.energyCapacity)
+        return ((structure.structureType === STRUCTURE_EXTENSION || structure.structureType === STRUCTURE_TOWER)
+          && structure.energy < structure.energyCapacity)
       }
     })[0];
 
