@@ -40,7 +40,7 @@ export class Builder extends BaseWorker.BaseWorker {
         else {
           let repairTarget = creep.pos.findClosestByRange<Structure>(FIND_STRUCTURES, {
             filter: (structure: Structure) => {
-              return (structure.hits < structure.hitsMax);
+              return ((structure.structureType === STRUCTURE_WALL && structure.hits < structure.hitsMax && structure.hits < 10000) || (structure.hits < structure.hitsMax && structure.structureType != STRUCTURE_WALL));
             }
           });
 

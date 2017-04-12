@@ -21,15 +21,15 @@ export class Transporter extends BaseWorker {
     if (creepActions.needsRenew(creep) && _.sum(creep.carry) == 0) {
       creepActions.moveToRenew(creep, spawn);
     }
-    if (_.sum(creep.carry) == creep.carryCapacity) {
+    if (_.sum(creep.carry) > 0) {
       this.moveToDropEnergy(creep, this.determineDropOff(creep));
       //this.logger.debug("dropping off");
 
-      if (_.sum(creep.carry) < creep.carryCapacity) {
+      if (_.sum(creep.carry) === 0) {
         creep.memory.dropOffDestination = null;
       }
     }
-    if (_.sum(creep.carry) < creep.carryCapacity && (targetContainer)) {
+    if (_.sum(creep.carry) === 0 && (targetContainer)) {
       //this.logger.debug("picking up");
       this.moveToWithdrawFromContainer(creep, targetContainer);
 

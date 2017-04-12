@@ -55,7 +55,7 @@ export class CreepManager {
       })[0];
       if (tower) {
         let closestDamagedStructure = tower.pos.findClosestByRange<Structure>(FIND_STRUCTURES, {
-          filter: (structure: Structure) => structure.hits < structure.hitsMax && structure.structureType != STRUCTURE_WALL
+          filter: (structure: Structure) => (structure.hits < structure.hitsMax && structure.structureType != STRUCTURE_WALL) || (structure.structureType === STRUCTURE_WALL && structure.hits < structure.hitsMax && structure.hits < 10000)
         });
         if (closestDamagedStructure) {
           tower.repair(closestDamagedStructure);
@@ -108,9 +108,9 @@ export class CreepManager {
       }
     }
 
-    this.spawnRole("transporter", 8, this.transporters, room, spawns);
-    this.spawnRole("harvester", 6, this.harvesters, room, spawns);
-    this.spawnRole("upgrader", 6, this.upgraders, room, spawns);
+    this.spawnRole("transporter", 10, this.transporters, room, spawns);
+    this.spawnRole("harvester", 4, this.harvesters, room, spawns);
+    this.spawnRole("upgrader", 4, this.upgraders, room, spawns);
     this.spawnRole("builder", 3, this.builders, room, spawns);
   }
 
